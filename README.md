@@ -54,6 +54,7 @@ PortfolioCore/
 │   ├── Views/
 │   ├── wwwroot/
 │   ├── Program.cs
+│   ├── appsettings.json
 │   └── PortfolioCoreDay.csproj
 └── README.md
 ```
@@ -63,7 +64,7 @@ PortfolioCore/
 Before running the project, make sure the following tools are installed:
 
 - .NET 6 SDK
-- SQL Server, SQL Server Express, or LocalDB
+- SQL Server, SQL Server Express, LocalDB, or SQL Server running in Docker
 - Visual Studio 2022 or Visual Studio Code
 - EF Core CLI tools
 
@@ -83,33 +84,35 @@ dotnet tool update --global dotnet-ef
 
 The project uses SQL Server with Entity Framework Core Code First migrations.
 
-The database configuration is currently defined in:
+The database connection is read from:
 
 ```text
-PortfolioCoreDay/Context/PortfolioContext.cs
+PortfolioCoreDay/appsettings.json
 ```
 
-Current connection string:
+Default local configuration:
 
-```csharp
-Server=DESKTOP-NBRMDOS;initial Catalog=PortfolioDayDb;integrated security=true;
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=localhost;Database=PortfolioDayDb;Trusted_Connection=True;TrustServerCertificate=True;"
+}
 ```
 
-Before running the project locally, update the `Server` value according to your SQL Server setup. Examples:
+For team or production-like usage, keep machine-specific values out of source control and override the connection string with user secrets:
 
-For SQL Server Express:
+```bash
+dotnet user-secrets init --project PortfolioCoreDay/PortfolioCoreDay.csproj
 
-```csharp
-Server=.\\SQLEXPRESS;initial Catalog=PortfolioDayDb;integrated security=true;TrustServerCertificate=True;
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Database=PortfolioDayDb;Trusted_Connection=True;TrustServerCertificate=True;" --project PortfolioCoreDay/PortfolioCoreDay.csproj
 ```
 
-For LocalDB:
+If you use SQL Server in Docker, use a SQL authentication connection string instead:
 
-```csharp
-Server=(localdb)\\MSSQLLocalDB;initial Catalog=PortfolioDayDb;integrated security=true;TrustServerCertificate=True;
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=PortfolioDayDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;" --project PortfolioCoreDay/PortfolioCoreDay.csproj
 ```
 
-After updating the connection string, apply migrations:
+Apply migrations:
 
 ```bash
 dotnet ef database update --project PortfolioCoreDay/PortfolioCoreDay.csproj --startup-project PortfolioCoreDay/PortfolioCoreDay.csproj
@@ -174,16 +177,16 @@ Open the application in your browser using the localhost URL shown in the termin
 - Admin-oriented management screens
 - Custom route and error page handling
 - Template customization in an ASP.NET Core project
+- Environment-based configuration with `appsettings.json` and user secrets
 
 ## Future Improvements
 
-- Move the connection string from `PortfolioContext.cs` to `appsettings.json`
 - Add authentication and authorization for admin pages
 - Add image upload support for portfolio items
 - Add pagination and filtering for admin lists
 - Add seed data for faster local setup
 - Add unit/integration tests
-- Add Docker support for easier local development
+- Add Docker Compose support for easier local development
 - Upgrade the project to a newer .NET version
 
 ## Repository
