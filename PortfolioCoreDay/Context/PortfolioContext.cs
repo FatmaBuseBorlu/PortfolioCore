@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PortfolioCoreDay.Entities;
 
 namespace PortfolioCoreDay.Context
 {
-    public class PortfolioContext:DbContext
+    public class PortfolioContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public PortfolioContext(DbContextOptions<PortfolioContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-NBRMDOS;initial Catalog=PortfolioDayDb;integrated security=true;");
         }
+
         public DbSet<Education> Educations { get; set; }
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -19,10 +19,8 @@ namespace PortfolioCoreDay.Context
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
-        public DbSet<Statistic>Statistics { get; set; }
+        public DbSet<Statistic> Statistics { get; set; }
         public DbSet<MyJob> MyJobs { get; set; }
         public DbSet<About> Abouts { get; set; }
-
-
     }
 }
